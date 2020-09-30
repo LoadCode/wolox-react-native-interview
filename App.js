@@ -5,12 +5,29 @@
  * @format
  * @flow strict-local
  */
-
+import 'react-native-gesture-handler';
 import React from 'react';
-import SignUpForm from './src/screens/signup';
+import {NavigationContainer} from '@react-navigation/native';
+import {StyleSheet, SafeAreaView} from 'react-native';
+import {UserAuthenticationProvider} from './src/context/AuthenticationContext';
+import AuthNavigator from './src/authentication-flow/AuthNavigator';
 
-const App = () => {
-  return <SignUpForm />;
-};
+function App() {
+  return (
+    <NavigationContainer>
+      <SafeAreaView style={styles.container}>
+        <UserAuthenticationProvider>
+          <AuthNavigator />
+        </UserAuthenticationProvider>
+      </SafeAreaView>
+    </NavigationContainer>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
 
 export default App;

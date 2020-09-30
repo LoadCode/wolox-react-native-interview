@@ -1,45 +1,75 @@
 import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
-import {Linking} from 'react-native';
 import {Picker} from '@react-native-community/picker';
 import {Button, Input, Text, CheckBox} from 'react-native-elements';
 import {COLORS} from '../config/constants';
+import {useAuthUpdate} from '../context/AuthenticationContext';
+import {
+  getAgePickerItems,
+  TermsAndPolicy,
+  validateEmail,
+} from '../utils/GenericComponents';
 
-function LinkText(props) {
-  return (
-    <Text
-      style={{color: COLORS.LINK, fontWeight: 'bold'}}
-      onPress={() => Linking.openURL(props.url)}>
-      {props.text}
-    </Text>
-  );
-}
-
-function TermsAndPolicy(props) {
-  return (
-    <View style={{paddingLeft: 10, flex: 1}}>
-      <Text style={styles.termsAndPolicy}>
-        I agree to the My Book Collection
-        <LinkText text=" Terms of Service " url="https://www.google.com/" />
-        and the
-        <LinkText text=" Privacy Policy" url="https://www.google.com/" />
-      </Text>
-    </View>
-  );
-}
-
-export default function SignUpForm() {
+export default function LogInForm(props) {
+  // State variables to handle form data
+  const [name, setName] = useState('Julio');
+  const [lastname, setLastname] = useState('Echeverri');
+  const [age, setAge] = useState('27');
+  const [email, setEmail] = useState('julio.marulanda@outlook.com');
   const [check, setCheck] = useState(false);
-  const [age, setAge] = useState(7);
-  let ageValues = [];
-  for (let i = 7; i < 120; i++)
-    ageValues.push(
-      <Picker.Item
-        label={i == 7 ? 'Age' : i.toString()}
-        value={i == 7 ? 'Age' : i.toString()}
-        key={i.toString()}
-      />,
-    );
+  const [buttonLoading, setButtonLoading] = useState(false);
+
+  // Error state variables
+  const [nameErrorMessage, setNameErrorMessage] = useState('');
+  const [lastnameErrorMessage, setLastnameErrorMessage] = useState('');
+  const [emailErrorMessage, setEmailErrorMessage] = useState('');
+  const [checkErrorMessage, setCheckErrorMessage] = useState('');
+  const [ageErrorMessage, setAgeErrorMessage] = useState('');
+
+  // Use authentication custom hook
+  const authUpdate = useAuthUpdate();
+
+  const handleLogin = () => {
+    console.log('Handling login');
+    // Clear all error messages
+    if (nameErrorMessage !== '') setNameErrorMessage('');
+    if (lastnameErrorMessage !== '') setLastnameErrorMessage('');
+    if (emailErrorMessage !== '') setEmailErrorMessage('');
+    if (ageErrorMessage !== '') setEmailErrorMessage('');
+    if (checkErrorMessage !== '') setCheckErrorMessage('');
+
+    // Validate form fields before attempting a login operation
+    let isValidFormatEmail = false;
+    isValidFormatEmail = validateEmail(email);
+    if (!isValidFormatEmail) {
+      setEmailErrorMessage('Not a valid email  format');
+    } else if (name === '' || !isNaN(name)) {
+      setNameErrorMessage('We need your name here');
+    } else if (lastname === '' || !isNaN(lastname)) {
+      setLastnameErrorMessage('We need your lastname here');
+    } else if (!check) {
+      setCheckErrorMessage('Agree to the Terms of Service');
+    } else if (isNaN(age)) {
+      setCheckErrorMessage('We need your age');
+    } else {
+      // Changes the button state to loading while wait for the login to resolve
+      setButtonLoading(true);
+
+      // Send a login request
+      let signupDocument = {
+        name: name,
+        lastname: lastname,
+        age: age,
+        email: email,
+        acceptToS: 'yes',
+      };
+      console.log('signup document');
+      console.log(signupDocument);
+      authUpdate.login(signupDocument);
+    }
+  };
+
+  let ageValues = getAgePickerItems(9, 99);
 
   return (
     <View style={styles.container}>
@@ -52,6 +82,8 @@ export default function SignUpForm() {
             maxLength={40}
             placeholder="Name"
             textContentType="name"
+            onChangeText={(_name) => setName(_name)}
+            errorMessage={nameErrorMessage}
             inputStyle={styles.textInput}
             placeholderTextColor={COLORS.GREY}
             inputContainerStyle={styles.inputContainer}
@@ -60,13 +92,15 @@ export default function SignUpForm() {
             maxLength={40}
             placeholder="Lastname"
             textContentType="name"
+            onChangeText={(_lastname) => setLastname(_lastname)}
+            errorMessage={lastnameErrorMessage}
             inputStyle={styles.textInput}
             placeholderTextColor={COLORS.GREY}
             inputContainerStyle={styles.inputContainer}
           />
           <View style={styles.pickerContainer}>
             <Picker
-              selectedValue={age.toString()}
+              selectedValue={age}
               onValueChange={(value, index) => setAge(value)}>
               {ageValues}
             </Picker>
@@ -76,12 +110,14 @@ export default function SignUpForm() {
             placeholder="Email"
             autoCompleteType="off"
             autoCapitalize="none"
+            onChangeText={(_email) => setEmail(_email)}
+            errorMessage={emailErrorMessage}
             inputStyle={styles.textInput}
             placeholderTextColor={COLORS.GREY}
             inputContainerStyle={styles.inputContainer}
           />
           <CheckBox
-            title={<TermsAndPolicy />}
+            title={<TermsAndPolicy style={styles.termsAndPolicy} />}
             checked={check}
             onIconPress={() => setCheck(!check)}
             Component={View}
@@ -94,6 +130,8 @@ export default function SignUpForm() {
         <View style={styles.buttonContainer}>
           <Button
             title="Sign Up"
+            onPress={handleLogin}
+            loading={buttonLoading}
             titleStyle={styles.termsAndPolicy}
             buttonStyle={styles.button}
             containerStyle={{backgroundColor: 'gold', width: '95%', flex: 0.4}}
