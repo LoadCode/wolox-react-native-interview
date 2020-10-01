@@ -36,7 +36,7 @@ export function UserAuthenticationProvider({children}) {
   function login(loginDoc) {
     console.log('\nLog In\n');
     axios
-      .post('http://192.168.1.53:3000/sign_in', loginDoc)
+      .post('http://localhost:3000/sign_in', loginDoc)
       .then((res) => {
         console.log(res);
         setUser(loginDoc.email);
