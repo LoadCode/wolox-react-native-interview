@@ -8,7 +8,7 @@
       "genre": "Short story",
       "publisher": "Butterworth-Heinemann",
       "year": "1968",
-      "image_url": null
+      "image_url": "http://wolox-training.s3.amazonaws.com/uploads/41DNuJfahyL._SX322_BO1_204_203_200_.jpg"
     },
     {
       "id": 2,
@@ -67,7 +67,7 @@
     {
       "id": 8,
       "author": "John Katzenbach",
-      "title": "The analyst",
+      "title": "The Analyst",
       "genre": "thriller",
       "publisher": "Ballantine Books",
       "year": "2003",
@@ -81,6 +81,24 @@
       "publisher": "Crown Publishing Group",
       "year": "2011",
       "image_url": "http://wolox-training.s3.amazonaws.com/uploads/41DNuJfahyL._SX322_BO1_204_203_200_.jpg"
+    },
+    {
+      "id": 12,
+      "author": "Arthur Manchester",
+      "title": "Knowing React Native",
+      "genre": "Proffessional",
+      "publisher": "Time After Time",
+      "year": "2020",
+      "image_url": "http://wolox-training.s3.amazonaws.com/uploads/el-psicoanalista-analyst-john-katzenbach-paperback-cover-art.jpg"
+    },
+    {
+      "id": 13,
+      "author": "Ralph Waldo Emerson",
+      "title": "Knowing React Native",
+      "genre": "Proffessional",
+      "publisher": "Time After Time",
+      "year": "2020",
+      "image_url": null
     }
   ]
 }
